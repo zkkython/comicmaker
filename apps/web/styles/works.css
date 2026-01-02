@@ -1,0 +1,55 @@
+/* 作品管理特定样式 */
+
+.work-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.work-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.work-card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.work-card-content {
+    padding: 1.5rem;
+}
+
+.work-card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.work-card-description {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.work-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.work-card-actions .btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+

@@ -1,0 +1,304 @@
+/* 剧集编辑特定样式 */
+
+.shots-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.shot-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.shot-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.shot-number {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.shot-description {
+    margin-bottom: 1rem;
+    color: #7f8c8d;
+}
+
+.prompt-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+}
+
+.prompt-tab {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #7f8c8d;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.3s;
+}
+
+.prompt-tab:hover {
+    color: #2c3e50;
+}
+
+.prompt-tab.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+}
+
+.prompt-content {
+    display: none;
+}
+
+.prompt-content.active {
+    display: block;
+}
+
+.prompt-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* 字段编辑样式 */
+.field-section {
+    margin-bottom: 1rem;
+}
+
+.field-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.field-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.field-view {
+    flex: 1;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    color: #34495e;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    min-height: 2rem;
+}
+
+.field-edit {
+    display: none;
+}
+
+.field-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.field-edit-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.content-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.content-item {
+    margin-bottom: 1rem;
+}
+
+.content-preview {
+    margin-top: 0.5rem;
+}
+
+.content-preview img,
+.content-preview video {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+}
+
+.content-preview audio {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.image-candidates {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.image-candidate {
+    position: relative;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.image-candidate:hover {
+    border-color: #3498db;
+}
+
+.image-candidate.selected {
+    border-color: #27ae60;
+}
+
+.image-candidate img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.image-candidate .select-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: #27ae60;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.content-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.content-actions .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.content-preview {
+    margin-top: 1rem;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+}
+
+.loading::after {
+    content: '...';
+    animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+}
+
+/* 参考视频历史样式 */
+.video-history-item {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.video-history-item:hover {
+    background: #f5f5f5;
+    border-color: #3498db;
+    color: #333;
+}
+
+.video-history-item.current {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+.video-history-item.current:hover {
+    background: #2980b9;
+    color: white;
+}
+
+.video-history-item .badge {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.video-history-item:not(.current) .badge {
+    background: #27ae60;
+    color: white;
+}
+
+/* 预览字幕样式 */
+#preview-subtitle-container {
+    padding: 1rem;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    border-top: 1px solid #ddd;
+}
+
+.preview-subtitle {
+    display: none;
+    color: white;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.preview-subtitle .subtitle-character {
+    color: #ffd700;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.preview-subtitle .subtitle-text {
+    color: #ffffff;
+}
+

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剧集详情 - ComicMaker</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">ComicMaker</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="materials.html">素材管理</a></li>
+                <li><a href="works.html" class="active">作品管理</a></li>
+                <li><a href="styles.html">风格管理</a></li>
+                <li><a href="tools.html">工具</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">编辑剧集详情</h2>
+                    <a href="episodes.html" id="back-link" class="btn btn-secondary">返回剧集列表</a>
+                </div>
+
+                <form id="episode-form">
+                    <div class="form-group">
+                        <label for="episode-name">剧集名称 *</label>
+                        <input type="text" id="episode-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="episode-description">剧集描述</label>
+                        <textarea id="episode-description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>封面图片</label>
+                        <input type="file" id="cover-image" accept="image/*">
+                        <div id="cover-preview" class="image-preview"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/dialog.js"></script>
+    <script src="js/image-upload.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const workId = urlParams.get('work_id');
+        const episodeId = urlParams.get('episode_id');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 初始化封面图片上传组件
+            initImageUpload('cover-image', 'cover-preview', {
+                onChange: (files) => {
+                    // 预览已通过 displayPreview 处理
+                }
+            });
+            
+            if (!workId || !episodeId) {
+                await showAlertDialog('缺少必要参数', '错误');
+                window.location.href = 'works.html';
+                return;
+            }
+
+            document.getElementById('back-link').href = `episodes.html?work_id=${workId}`;
+
+            try {
+                const episode = await API.getEpisode(workId, episodeId);
+                document.getElementById('episode-name').value = episode.name || '';
+                document.getElementById('episode-description').value = episode.description || '';
+                
+                if (episode.cover_image) {
+                    document.getElementById('cover-preview').innerHTML = 
+                        `<img src="http://localhost:8000/data/works/${workId}/episodes/${episodeId}/${episode.cover_image}" alt="封面">`;
+                }
+            } catch (error) {
+                console.error('加载剧集失败:', error);
+                await showAlertDialog('加载剧集失败: ' + error.message, '错误');
+            }
+
+            document.getElementById('episode-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData();
+                formData.append('name', document.getElementById('episode-name').value);
+                formData.append('description', document.getElementById('episode-description').value);
+                
+                const coverFile = document.getElementById('cover-image').files[0];
+                if (coverFile) {
+                    formData.append('cover_image', coverFile);
+                }
+
+                try {
+                    await API.updateEpisode(workId, episodeId, formData);
+                    await showAlertDialog('保存成功', '成功');
+                } catch (error) {
+                    console.error('保存失败:', error);
+                    await showAlertDialog('保存失败: ' + error.message, '错误');
+                }
+            });
+
+            document.getElementById('cover-image').addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        document.getElementById('cover-preview').innerHTML = 
+                            `<img src="${event.target.result}" alt="封面预览">`;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+        });
+    </script>
+    <style>
+        .image-preview {
+            margin-top: 0.5rem;
+        }
+        .image-preview img {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+    </style>
+</body>
+</html>
+

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 工具 - ComicMaker</title>
+    <link rel="stylesheet" href="styles/main.css?v=20251227">
+    <link rel="stylesheet" href="styles/tools.css?v=20251227">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">ComicMaker</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="materials.html">素材管理</a></li>
+                <li><a href="works.html">作品管理</a></li>
+                <li><a href="styles.html">风格管理</a></li>
+                <li><a href="tools.html" class="active">工具</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="tools-layout">
+            <!-- 左侧：工具列表 -->
+            <aside class="tools-sidebar">
+                <h2>AI 工具</h2>
+                <ul id="tools-list" class="tools-list">
+                    <!-- 工具列表将通过 JS 动态生成 -->
+                </ul>
+            </aside>
+
+            <!-- 中间：编辑窗口 -->
+            <section class="tools-editor">
+                <div class="editor-header">
+                    <h3 id="editor-title">选择一个工具开始使用</h3>
+                </div>
+                <div class="editor-content">
+                    <!-- 工具表单 -->
+                    <form id="tool-form" class="tool-form" style="display: none;">
+                        <div id="tool-form-fields"></div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">生成</button>
+                            <button type="button" class="btn btn-secondary" onclick="clearEditor()">清空</button>
+                        </div>
+                    </form>
+
+                    <!-- 任务状态 -->
+                    <div id="task-status" class="task-status" style="display: none;">
+                        <div class="task-progress">
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill"></div>
+                            </div>
+                            <div id="progress-text" class="progress-text">0%</div>
+                        </div>
+                        <div id="task-status-message" class="task-status-message">正在处理...</div>
+                        <div id="task-status-actions" class="task-status-actions" style="display: none;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="showTaskDetail()">查看详情</button>
+                        </div>
+                    </div>
+
+                    <!-- 结果展示 -->
+                    <div id="result-content" class="result-content" style="display: none;">
+                        <!-- 结果内容将通过 JS 动态生成 -->
+                    </div>
+
+                    <!-- 空状态 -->
+                    <div id="editor-empty" class="editor-empty">
+                        <p>请从左侧选择一个工具开始使用</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右侧：历史记录 -->
+            <aside class="tools-history">
+                <div class="history-header">
+                    <h3>历史记录</h3>
+                    <select id="history-filter" class="filter-select">
+                        <option value="">全部工具</option>
+                        <!-- 筛选选项将通过 JS 动态生成 -->
+                    </select>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- 历史记录将通过 JS 动态生成 -->
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- 历史记录详情弹窗 -->
+    <dialog id="history-detail-dialog" class="history-detail-dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>历史记录详情</h3>
+                <button class="close-btn" onclick="closeHistoryDetailDialog()">&times;</button>
+            </div>
+            <div id="history-detail-content" class="history-detail-content">
+                <!-- 详情内容将通过 JS 动态生成 -->
+            </div>
+        </div>
+    </dialog>
+
+    <!-- 任务详情弹窗 -->
+    <dialog id="task-detail-dialog" class="task-detail-dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>任务详情</h3>
+                <button class="close-btn" onclick="closeTaskDetailDialog()">&times;</button>
+            </div>
+            <div id="task-detail-content" class="task-detail-content">
+                <!-- 详情内容将通过 JS 动态生成 -->
+            </div>
+        </div>
+    </dialog>
+
+    <!-- 素材选择面板 -->
+    <dialog id="material-select-dialog" class="material-select-dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>选择素材</h3>
+                <button class="close-btn" onclick="closeMaterialSelectDialog()">&times;</button>
+            </div>
+            <div class="material-select-content">
+                <!-- 筛选标签 -->
+                <div class="material-filter-tabs">
+                    <button class="filter-tab active" data-type="all" onclick="filterMaterials('all')">全部</button>
+                    <button class="filter-tab" data-type="characters" onclick="filterMaterials('characters')">人物</button>
+                    <button class="filter-tab" data-type="scenes" onclick="filterMaterials('scenes')">场景</button>
+                    <button class="filter-tab" data-type="props" onclick="filterMaterials('props')">道具</button>
+                    <button class="filter-tab" data-type="others" onclick="filterMaterials('others')">其他</button>
+                </div>
+                <!-- 素材网格 -->
+                <div id="material-select-grid" class="material-select-grid">
+                    <!-- 素材列表将通过 JS 动态生成 -->
+                </div>
+            </div>
+            <div class="material-select-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeMaterialSelectDialog()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="confirmMaterialSelection()">选择</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- 素材多选面板 -->
+    <dialog id="material-multi-select-dialog" class="material-select-dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>选择素材（可多选）</h3>
+                <button class="close-btn" onclick="closeMaterialMultiSelectDialog()">&times;</button>
+            </div>
+            <div class="material-select-content">
+                <!-- 操作按钮 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="refreshMaterialMultiSelect()">刷新</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="createMaterialFromMultiSelect()">创建素材</button>
+                    </div>
+                    <div id="material-multi-select-count" style="color: #666; font-size: 0.9rem;">已选择 0 个素材</div>
+                </div>
+                <!-- 筛选标签 -->
+                <div id="material-multi-select-filter-tabs" class="material-filter-tabs">
+                    <!-- 动态生成 -->
+                </div>
+                <!-- 素材网格 -->
+                <div id="material-multi-select-grid" class="material-select-grid">
+                    <!-- 素材列表将通过 JS 动态生成 -->
+                </div>
+            </div>
+            <div class="material-select-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeMaterialMultiSelectDialog()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="confirmMaterialMultiSelection()">确认选择</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- 素材详情面板 -->
+    <dialog id="material-detail-dialog" class="material-detail-dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>素材详情</h3>
+                <button class="close-btn" onclick="closeMaterialDetailDialog()">&times;</button>
+            </div>
+            <div id="material-detail-content" class="material-detail-content">
+                <!-- 详情内容将通过 JS 动态生成 -->
+            </div>
+        </div>
+    </dialog>
+
+    <script src="js/api.js?v=20251227"></script>
+    <script src="js/dialog.js?v=20251227"></script>
+    <script src="js/image-upload.js?v=20251227"></script>
+    <script src="js/tools.js?v=20251227"></script>
+</body>
+</html>

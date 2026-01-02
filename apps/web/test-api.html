@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 测试 - ComicMaker</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/test-api.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">ComicMaker</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="materials.html">素材管理</a></li>
+                <li><a href="works.html">作品管理</a></li>
+                <li><a href="styles.html">风格管理</a></li>
+                <li><a href="tools.html">工具</a></li>
+                <li><a href="test-api.html" class="active">API 测试</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">API 测试</h2>
+                    <div class="test-actions">
+                        <button class="btn btn-primary" id="run-all-btn">执行所有测试</button>
+                        <select id="module-filter" class="form-control">
+                            <option value="">所有模块</option>
+                            <option value="materials">素材管理</option>
+                            <option value="works">作品管理</option>
+                            <option value="episodes">剧集管理</option>
+                            <option value="content">内容生成</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="test-summary" class="test-summary" style="display: none;">
+                    <div class="summary-item">
+                        <span class="summary-label">总计:</span>
+                        <span id="total-count" class="summary-value">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">通过:</span>
+                        <span id="passed-count" class="summary-value success">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">失败:</span>
+                        <span id="failed-count" class="summary-value error">0</span>
+                    </div>
+                </div>
+
+                <div id="test-cases-list" class="test-cases-list">
+                    <p class="loading">加载测试用例...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 测试详情模态框 -->
+    <dialog class="modal" id="test-detail-modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="detail-title">测试详情</h3>
+                <button class="modal-close" onclick="closeTestDetail()">&times;</button>
+            </div>
+            <div id="test-detail-content">
+                <!-- 测试详情内容 -->
+            </div>
+        </div>
+    </dialog>
+
+    <script src="js/api.js"></script>
+    <script src="js/dialog.js"></script>
+    <script src="js/test-api.js"></script>
+</body>
+</html>
+

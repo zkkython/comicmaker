@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剧集管理 - ComicMaker</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/works.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">ComicMaker</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="materials.html">素材管理</a></li>
+                <li><a href="works.html" class="active">作品管理</a></li>
+                <li><a href="styles.html">风格管理</a></li>
+                <li><a href="tools.html">工具</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title" id="work-title">剧集管理</h2>
+                    <div>
+                        <a href="works.html" class="btn btn-secondary">返回作品列表</a>
+                        <button class="btn btn-primary" id="create-episode-btn">创建新剧集</button>
+                    </div>
+                </div>
+
+                <div id="episodes-list" class="grid">
+                    <!-- 剧集列表将在这里动态加载 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 创建剧集模态框 -->
+    <dialog class="modal" id="create-episode-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>创建新剧集</h3>
+                <button class="modal-close" onclick="closeCreateEpisodeModal()">&times;</button>
+            </div>
+            <form id="create-episode-form">
+                <div class="form-group">
+                    <label for="episode-name">剧集名称 *</label>
+                    <input type="text" id="episode-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="episode-description">剧集描述</label>
+                    <textarea id="episode-description"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateEpisodeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">创建</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <script src="js/api.js"></script>
+    <script src="js/dialog.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const workId = urlParams.get('work_id');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!workId) {
+                await showAlertDialog('缺少作品ID', '错误');
+                window.location.href = 'works.html';
+                return;
+            }
+
+            loadWorkInfo();
+            loadEpisodes();
+
+            document.getElementById('create-episode-btn').addEventListener('click', openCreateEpisodeModal);
+            document.getElementById('create-episode-form').addEventListener('submit', handleCreateEpisode);
+        });
+
+        async function loadWorkInfo() {
+            try {
+                const work = await API.getWork(workId);
+                document.getElementById('work-title').textContent = `${work.name} - 剧集管理`;
+            } catch (error) {
+                console.error('加载作品信息失败:', error);
+            }
+        }
+
+        async function loadEpisodes() {
+            try {
+                const response = await API.listEpisodes(workId);
+                const episodes = response.episodes || [];
+                renderEpisodes(episodes);
+            } catch (error) {
+                console.error('加载剧集失败:', error);
+                await showAlertDialog('加载剧集失败: ' + error.message, '错误');
+            }
+        }
+
+        function renderEpisodes(episodes) {
+            const listEl = document.getElementById('episodes-list');
+            
+            if (episodes.length === 0) {
+                listEl.innerHTML = '<p style="text-align: center; color: #7f8c8d; grid-column: 1/-1;">暂无剧集，点击"创建新剧集"开始创建</p>';
+                return;
+            }
+
+            listEl.innerHTML = episodes.map(episode => {
+                const coverUrl = episode.cover_image
+                    ? `http://localhost:8000/data/works/${workId}/episodes/${episode.id}/${episode.cover_image}`
+                    : '';
+                
+                return `
+                    <div class="work-card">
+                        ${coverUrl ? `<img src="${coverUrl}" alt="${episode.name}" class="work-card-image" onerror="this.style.display='none'">` : ''}
+                        <div class="work-card-content">
+                            <h3 class="work-card-title">${episode.name}</h3>
+                            <p class="work-card-description">${episode.description || ''}</p>
+                            <div class="work-card-actions">
+                                <button class="btn btn-primary" onclick="editEpisodeDetails('${episode.id}')">编辑详情</button>
+                                <button class="btn btn-success" onclick="editEpisode('${episode.id}')">编辑剧集</button>
+                                <button class="btn btn-danger" onclick="deleteEpisode('${episode.id}')">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openCreateEpisodeModal() {
+            const modal = document.getElementById('create-episode-modal');
+            modal.showModal();
+        }
+
+        function closeCreateEpisodeModal() {
+            const modal = document.getElementById('create-episode-modal');
+            modal.close();
+            document.getElementById('create-episode-form').reset();
+        }
+
+        async function handleCreateEpisode(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('name', document.getElementById('episode-name').value);
+            formData.append('description', document.getElementById('episode-description').value);
+            
+            try {
+                const episode = await API.createEpisode(workId, formData);
+                closeCreateEpisodeModal();
+                loadEpisodes();
+                await showAlertDialog('剧集创建成功', '成功');
+                // 自动跳转到编辑页面
+                editEpisode(episode.id);
+            } catch (error) {
+                console.error('创建剧集失败:', error);
+                await showAlertDialog('创建剧集失败: ' + error.message, '错误');
+            }
+        }
+
+        function editEpisodeDetails(episodeId) {
+            window.location.href = `episode-detail.html?work_id=${workId}&episode_id=${episodeId}`;
+        }
+
+        function editEpisode(episodeId) {
+            window.location.href = `episode-edit.html?work_id=${workId}&episode_id=${episodeId}`;
+        }
+
+        async function deleteEpisode(episodeId) {
+            const confirmed = await showConfirmDialog('确定要删除这个剧集吗？这将删除所有相关的内容。', '确认删除', 'danger');
+            if (!confirmed) {
+                return;
+            }
+            
+            try {
+                await API.deleteEpisode(workId, episodeId);
+                loadEpisodes();
+                await showAlertDialog('删除成功', '成功');
+            } catch (error) {
+                console.error('删除失败:', error);
+                await showAlertDialog('删除失败: ' + error.message, '错误');
+            }
+        }
+    </script>
+</body>
+</html>
+

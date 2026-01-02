@@ -1,0 +1,143 @@
+/* API 测试页面特定样式 */
+
+.test-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.form-control {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.test-summary {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.summary-label {
+    font-weight: 500;
+    color: #7f8c8d;
+}
+
+.summary-value {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.summary-value.success {
+    color: #27ae60;
+}
+
+.summary-value.error {
+    color: #e74c3c;
+}
+
+.test-cases-list {
+    margin-top: 1.5rem;
+}
+
+.test-case-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.test-case-item:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.test-case-info {
+    flex: 1;
+}
+
+.test-case-name {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+    color: #2c3e50;
+}
+
+.test-case-module {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.test-case-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.test-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.test-status.pending {
+    background: #ecf0f1;
+    color: #7f8c8d;
+}
+
+.test-status.running {
+    background: #3498db;
+    color: white;
+}
+
+.test-status.passed {
+    background: #27ae60;
+    color: white;
+}
+
+.test-status.failed {
+    background: #e74c3c;
+    color: white;
+}
+
+.test-detail-section {
+    margin-bottom: 1.5rem;
+}
+
+.test-detail-section h4 {
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.test-detail-content {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+}
+

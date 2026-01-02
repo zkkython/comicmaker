@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品详情 - ComicMaker</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/tools.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">ComicMaker</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="materials.html">素材管理</a></li>
+                <li><a href="works.html" class="active">作品管理</a></li>
+                <li><a href="styles.html">风格管理</a></li>
+                <li><a href="tools.html">工具</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">编辑作品详情</h2>
+                    <a href="works.html" class="btn btn-secondary">返回作品列表</a>
+                </div>
+
+                <form id="work-form">
+                    <div class="form-group">
+                        <label for="work-name">作品名称 *</label>
+                        <input type="text" id="work-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="work-description">作品描述</label>
+                        <textarea id="work-description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="style-description">风格描述</label>
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <select id="style-select" style="flex: 1;">
+                                <option value="">选择风格...</option>
+                            </select>
+                        </div>
+                        <textarea id="style-description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aspect-ratio">默认视频宽高比</label>
+                        <select id="aspect-ratio">
+                            <option value="16:9">16:9</option>
+                            <option value="9:16">9:16</option>
+                            <option value="4:3">4:3</option>
+                            <option value="3:4">3:4</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>封面图片（可上传多张）</label>
+                        <input type="file" id="cover-images" multiple accept="image/*">
+                        <div id="cover-preview" class="image-preview-grid"></div>
+                    </div>
+
+                    <!-- 素材管理区域 -->
+                    <div class="form-group">
+                        <h3 style="margin-bottom: 1rem; border-bottom: 2px solid #007bff; padding-bottom: 0.5rem;">素材设定</h3>
+                        
+                        <!-- 人物素材 -->
+                        <div class="material-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <label style="margin: 0; font-weight: 500;">人物素材</label>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="addMaterialToWork('characters')">添加人物素材</button>
+                            </div>
+                            <div id="character-materials-list" class="work-materials-list">
+                                <!-- 动态生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 场景素材 -->
+                        <div class="material-section" style="margin-top: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <label style="margin: 0; font-weight: 500;">场景素材</label>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="addMaterialToWork('scenes')">添加场景素材</button>
+                            </div>
+                            <div id="scene-materials-list" class="work-materials-list">
+                                <!-- 动态生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 道具素材 -->
+                        <div class="material-section" style="margin-top: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <label style="margin: 0; font-weight: 500;">道具素材</label>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="addMaterialToWork('props')">添加道具素材</button>
+                            </div>
+                            <div id="prop-materials-list" class="work-materials-list">
+                                <!-- 动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- 素材多选面板 -->
+    <dialog id="material-multi-select-dialog" class="material-select-dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>选择素材（可多选）</h3>
+                <button class="close-btn" onclick="closeMaterialMultiSelectDialog()">&times;</button>
+            </div>
+            <div class="material-select-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="refreshMaterialMultiSelect()">刷新</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="createMaterialFromMultiSelect()">创建素材</button>
+                    </div>
+                    <div id="material-multi-select-count" style="color: #666; font-size: 0.9rem;">已选择 0 个素材</div>
+                </div>
+                <div id="material-multi-select-filter-tabs" class="material-filter-tabs"></div>
+                <div id="material-multi-select-grid" class="material-select-grid"></div>
+            </div>
+            <div class="material-select-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeMaterialMultiSelectDialog()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="confirmMaterialMultiSelection()">确认选择</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="js/api.js"></script>
+    <script src="js/dialog.js"></script>
+    <script src="js/image-upload.js"></script>
+    <script src="js/tools.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const workId = urlParams.get('work_id');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 初始化封面图片上传组件
+            initImageUpload('cover-images', 'cover-preview', {
+                multiple: true,
+                onChange: (files) => {
+                    // 预览已通过 displayPreview 处理
+                }
+            });
+            
+            // 加载风格列表
+            try {
+                const styles = await API.getStyles();
+                const select = document.getElementById('style-select');
+                // 保留第一个"选择风格..."选项
+                select.innerHTML = '<option value="">选择风格...</option>';
+                styles.forEach(style => {
+                    const option = document.createElement('option');
+                    option.value = style.id;
+                    option.textContent = style.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('加载风格列表失败:', error);
+            }
+            
+            // 风格选择变化事件
+            document.getElementById('style-select').addEventListener('change', async (e) => {
+                const styleId = e.target.value;
+                if (styleId) {
+                    try {
+                        const style = await API.getStyle(styleId);
+                        document.getElementById('style-description').value = style.description || '';
+                    } catch (error) {
+                        console.error('加载风格详情失败:', error);
+                        await showAlertDialog('加载风格详情失败: ' + error.message, '错误');
+                    }
+                }
+            });
+            
+            if (!workId) {
+                await showAlertDialog('缺少作品ID', '错误');
+                window.location.href = 'works.html';
+                return;
+            }
+
+            try {
+                const work = await API.getWork(workId);
+                document.getElementById('work-name').value = work.name || '';
+                document.getElementById('work-description').value = work.description || '';
+                document.getElementById('style-description').value = work.style_description || '';
+                document.getElementById('aspect-ratio').value = work.default_aspect_ratio || '16:9';
+                
+                // 显示现有封面
+                if (work.cover_images && work.cover_images.length > 0) {
+                    const preview = document.getElementById('cover-preview');
+                    preview.innerHTML = work.cover_images.map((img, idx) => 
+                        `<img src="http://localhost:8000/data/works/${workId}/${img}" alt="封面${idx+1}">`
+                    ).join('');
+                }
+                
+                // 加载并显示关联的素材
+                await loadWorkMaterials(work);
+            } catch (error) {
+                console.error('加载作品失败:', error);
+                await showAlertDialog('加载作品失败: ' + error.message, '错误');
+            }
+
+            document.getElementById('work-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData();
+                formData.append('name', document.getElementById('work-name').value);
+                formData.append('description', document.getElementById('work-description').value);
+                formData.append('style_description', document.getElementById('style-description').value);
+                formData.append('default_aspect_ratio', document.getElementById('aspect-ratio').value);
+                
+                // 添加素材关联数据
+                formData.append('character_materials', JSON.stringify(currentWorkMaterials.characters || []));
+                formData.append('scene_materials', JSON.stringify(currentWorkMaterials.scenes || []));
+                formData.append('prop_materials', JSON.stringify(currentWorkMaterials.props || []));
+                
+                const coverFiles = document.getElementById('cover-images').files;
+                for (let file of coverFiles) {
+                    formData.append('cover_images', file);
+                }
+
+                try {
+                    await API.updateWork(workId, formData);
+                    await showAlertDialog('保存成功', '成功');
+                } catch (error) {
+                    console.error('保存失败:', error);
+                    await showAlertDialog('保存失败: ' + error.message, '错误');
+                }
+            });
+        });
+        
+        // 当前作品的素材关联数据
+        let currentWorkMaterials = {
+            characters: [],
+            scenes: [],
+            props: []
+        };
+        
+        // 加载作品关联的素材
+        async function loadWorkMaterials(work) {
+            currentWorkMaterials = {
+                characters: work.character_materials || [],
+                scenes: work.scene_materials || [],
+                props: work.prop_materials || []
+            };
+            
+            // 加载并显示各类型素材
+            await renderWorkMaterials('characters', currentWorkMaterials.characters);
+            await renderWorkMaterials('scenes', currentWorkMaterials.scenes);
+            await renderWorkMaterials('props', currentWorkMaterials.props);
+        }
+        
+        // 获取素材类型对应的元素ID（HTML中使用单数形式）
+        function getMaterialListElementId(type) {
+            const typeMap = {
+                'characters': 'character',
+                'scenes': 'scene',
+                'props': 'prop'
+            };
+            const elementType = typeMap[type] || type;
+            return `${elementType}-materials-list`;
+        }
+        
+        // 渲染作品素材列表
+        async function renderWorkMaterials(type, materialIds) {
+            const elementId = getMaterialListElementId(type);
+            const listEl = document.getElementById(elementId);
+            if (!listEl) {
+                console.error(`找不到元素: ${elementId} (类型: ${type})`);
+                return;
+            }
+            
+            console.log(`渲染 ${type} 素材列表，素材ID:`, materialIds);
+            
+            if (materialIds.length === 0) {
+                listEl.innerHTML = '<div class="work-material-item-empty">暂无素材</div>';
+                return;
+            }
+            
+            // 批量获取素材详情
+            const materials = [];
+            for (const materialId of materialIds) {
+                try {
+                    const material = await API.getMaterial(type, materialId);
+                    materials.push({ ...material, id: materialId, material_type: type });
+                    console.log(`成功加载素材 ${materialId}:`, material.name);
+                } catch (error) {
+                    console.error(`加载素材 ${materialId} 失败:`, error);
+                    // 如果素材不存在，跳过
+                }
+            }
+            
+            console.log(`成功加载 ${materials.length} 个素材`);
+            
+            // 如果没有成功加载任何素材，显示提示
+            if (materials.length === 0) {
+                listEl.innerHTML = '<div class="work-material-item-empty">暂无素材（或素材加载失败）</div>';
+                return;
+            }
+            
+            listEl.innerHTML = materials.map(material => {
+                const imageUrl = material.main_image ? 
+                    `http://localhost:8000/api/materials/${type}/${material.id}/image/${material.main_image}` : '';
+                return `
+                    <div class="work-material-item">
+                        <button type="button" class="work-material-item-delete" onclick="removeMaterialFromWork('${type}', '${material.id}')" title="删除">×</button>
+                        <img src="${imageUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Crect fill=%22%23ddd%22 width=%22120%22 height=%22120%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3E无图片%3C/text%3E%3C/svg%3E'}" 
+                             alt="${escapeHtml(material.name || '')}"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Crect fill=%22%23ddd%22 width=%22120%22 height=%22120%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3E无图片%3C/text%3E%3C/svg%3E'">
+                        <div class="work-material-item-name">${escapeHtml(material.name || '未命名')}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 添加素材到作品
+        function addMaterialToWork(type) {
+            openMaterialMultiSelectDialog([type], async (selectedIds) => {
+                console.log('选中的素材ID:', selectedIds);
+                
+                // 去重：只添加不存在的素材
+                const currentIds = currentWorkMaterials[type] || [];
+                const newIds = selectedIds.filter(id => !currentIds.includes(id));
+                
+                console.log('当前素材ID:', currentIds);
+                console.log('新素材ID:', newIds);
+                
+                if (newIds.length === 0) {
+                    await showAlertDialog('选中的素材都已存在', '提示');
+                    return;
+                }
+                
+                // 添加到列表
+                currentWorkMaterials[type] = [...currentIds, ...newIds];
+                
+                console.log('更新后的素材列表:', currentWorkMaterials[type]);
+                
+                // 重新渲染
+                await renderWorkMaterials(type, currentWorkMaterials[type]);
+                
+                // 自动保存
+                await saveWorkMaterials();
+                
+                // 保存成功后，重新加载作品数据以确保同步
+                try {
+                    const work = await API.getWork(workId);
+                    currentWorkMaterials = {
+                        characters: work.character_materials || [],
+                        scenes: work.scene_materials || [],
+                        props: work.prop_materials || []
+                    };
+                    // 重新渲染所有素材列表
+                    await renderWorkMaterials('characters', currentWorkMaterials.characters);
+                    await renderWorkMaterials('scenes', currentWorkMaterials.scenes);
+                    await renderWorkMaterials('props', currentWorkMaterials.props);
+                } catch (error) {
+                    console.error('重新加载作品数据失败:', error);
+                }
+            });
+        }
+        
+        // 从作品移除素材
+        async function removeMaterialFromWork(type, materialId) {
+            const confirmed = await showConfirmDialog('确定要移除这个素材吗？', '确认移除');
+            if (!confirmed) return;
+            
+            const currentIds = currentWorkMaterials[type] || [];
+            currentWorkMaterials[type] = currentIds.filter(id => id !== materialId);
+            
+            // 重新渲染
+            await renderWorkMaterials(type, currentWorkMaterials[type]);
+            
+            // 自动保存
+            await saveWorkMaterials();
+        }
+        
+        // 保存作品素材关联
+        async function saveWorkMaterials(showSuccess = false) {
+            try {
+                const formData = new FormData();
+                formData.append('character_materials', JSON.stringify(currentWorkMaterials.characters || []));
+                formData.append('scene_materials', JSON.stringify(currentWorkMaterials.scenes || []));
+                formData.append('prop_materials', JSON.stringify(currentWorkMaterials.props || []));
+                
+                await API.updateWork(workId, formData);
+                if (showSuccess) {
+                    await showAlertDialog('保存成功', '成功');
+                }
+            } catch (error) {
+                console.error('保存素材关联失败:', error);
+                await showAlertDialog('保存素材关联失败: ' + error.message, '错误');
+            }
+        }
+        
+        // escapeHtml 函数（如果 tools.js 中没有全局暴露）
+        function escapeHtml(text) {
+            if (typeof text !== 'string') return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+    <style>
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .image-preview-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .material-section {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .work-materials-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .work-material-item {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .work-material-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .work-material-item-name {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .work-material-item-delete {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .work-material-item:hover .work-material-item-delete {
+            opacity: 1;
+        }
+        
+        .work-material-item-empty {
+            text-align: center;
+            padding: 1rem;
+            color: #7f8c8d;
+            font-size: 0.875rem;
+        }
+    </style>
+</body>
+</html>
+

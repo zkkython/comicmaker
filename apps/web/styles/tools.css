@@ -1,0 +1,1140 @@
+/* 工具页面样式 - 三栏布局 */
+
+.tools-layout {
+    display: flex;
+    height: calc(100vh - 80px); /* 减去导航栏高度 */
+    gap: 1rem;
+    padding: 1rem;
+}
+
+/* 左侧：工具列表 */
+.tools-sidebar {
+    width: 250px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.tools-sidebar h2 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+}
+
+.tools-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tools-list li {
+    margin-bottom: 0.35rem; /* 缩小 30%: 0.5rem * 0.7 = 0.35rem */
+}
+
+.tool-item {
+    display: flex;
+    align-items: center;
+    gap: 0.525rem; /* 缩小 30%: 0.75rem * 0.7 = 0.525rem */
+    padding: 0.37rem 0.5rem; /* 再缩小 30%: 0.525rem * 0.7 = 0.3675rem ≈ 0.37rem, 0.7rem * 0.7 = 0.49rem ≈ 0.5rem */
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    min-height: auto; /* 移除固定高度 */
+}
+
+.tool-item:hover {
+    background: #f5f5f5;
+    border-color: #007bff;
+}
+
+.tool-item.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.tool-item .tool-icon {
+    font-size: 1.05rem; /* 缩小 30%: 1.5rem * 0.7 = 1.05rem */
+}
+
+.tool-item .tool-name {
+    flex: 1;
+    font-weight: 500;
+    font-size: 0.875rem; /* 适当缩小字体，约 14px */
+}
+
+/* 中间：编辑窗口 */
+.tools-editor {
+    flex: 1;
+    min-width: 400px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.editor-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    background: #f8f9fa;
+}
+
+.editor-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.editor-content {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+/* 工具表单 */
+.tool-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* 任务状态 */
+.task-status {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    border-top: 2px solid #e9ecef;
+}
+
+.task-progress {
+    margin-bottom: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 24px;
+    background: #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #007bff;
+    transition: width 0.3s;
+    width: 0%;
+}
+
+.progress-text {
+    text-align: center;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.task-status-message {
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.task-status-actions {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+}
+
+/* 结果展示 */
+.result-content {
+    padding: 1.5rem 0;
+    margin-top: 1.5rem;
+    border-top: 2px solid #e9ecef;
+}
+
+.result-content h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.result-text pre {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+.result-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.result-video video {
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.result-audio audio {
+    width: 100%;
+}
+
+.result-json pre {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* 空状态 */
+.editor-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #999;
+    font-size: 1.1rem;
+}
+
+/* 右侧：历史记录 */
+.tools-history {
+    width: 400px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.history-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.history-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.filter-select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    flex: 1;
+    max-width: 200px;
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.history-item {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s;
+}
+
+.history-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.history-item-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.history-date {
+    color: #999;
+    font-size: 0.85rem;
+}
+
+.history-item-content {
+    margin-bottom: 0.75rem;
+}
+
+.history-input-preview {
+    color: #666;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.history-input-image {
+    max-width: 150px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.history-input-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.history-input-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.history-input-images .history-input-image {
+    margin-top: 0;
+}
+
+.history-output-section {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.history-output-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.history-output-image {
+    max-width: 150px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: block;
+}
+
+.history-output-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.history-output-video {
+    max-width: 200px;
+    max-height: 150px;
+    width: auto;
+    height: auto;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.history-output-video:hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.history-item-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #999;
+}
+
+/* 历史记录详情弹窗 */
+.history-detail-dialog {
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+}
+
+.history-detail-dialog .dialog-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+.history-detail-dialog .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    background: #f8f9fa;
+}
+
+.history-detail-dialog .dialog-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.history-detail-dialog .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.history-detail-dialog .close-btn:hover {
+    color: #333;
+}
+
+.history-detail-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.history-detail-content h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1.25rem;
+}
+
+.history-detail-content h5 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #666;
+    font-size: 1rem;
+}
+
+.history-detail-json {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.history-detail-text {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    font-size: 0.9rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.history-detail-raw {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    margin-top: 0.5rem;
+    max-height: 400px;
+}
+
+.prompt-section {
+    margin-bottom: 1rem;
+}
+
+.prompt-section strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.history-detail-prompt {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    margin-top: 0.5rem;
+    max-height: 300px;
+    font-size: 0.85rem;
+}
+
+.history-detail-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.history-detail-video {
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.history-detail-audio {
+    width: 100%;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .tools-layout {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .tools-sidebar {
+        width: 100%;
+        max-height: 200px;
+    }
+
+    .tools-editor {
+        min-width: 0;
+        min-height: 400px;
+    }
+
+    .tools-history {
+        width: 100%;
+        max-height: 500px;
+    }
+}
+
+/* 图片列表容器（用于图生图工具） */
+.image-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border: 2px dashed #ddd;
+    border-radius: 6px;
+    min-height: 100px;
+    transition: border-color 0.2s;
+}
+
+.image-list-container.drag-over {
+    border-color: #007bff;
+    background: #f0f8ff;
+}
+
+/* 图片列表项 */
+.image-list-item {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: move;
+    transition: all 0.2s;
+    background: white;
+}
+
+.image-list-item:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.image-list-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.image-list-item.drag-over {
+    border-color: #007bff;
+    border-width: 3px;
+}
+
+.image-list-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 删除按钮 */
+.image-list-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.image-list-remove:hover {
+    background: rgba(255, 0, 0, 1);
+    transform: scale(1.1);
+}
+
+/* 拖拽手柄 */
+.image-list-drag-handle {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    padding: 2px 6px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 12px;
+    border-radius: 4px;
+    user-select: none;
+    z-index: 10;
+}
+
+/* 任务详情弹窗 */
+.task-detail-dialog {
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+}
+
+.task-detail-dialog .dialog-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+.task-detail-dialog .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    background: #f8f9fa;
+}
+
+.task-detail-dialog .dialog-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.task-detail-dialog .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.task-detail-dialog .close-btn:hover {
+    color: #333;
+    background: #e9ecef;
+}
+
+.task-detail-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.task-detail-section {
+    margin-bottom: 1.5rem;
+}
+
+.task-detail-section h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.task-detail-section p {
+    margin: 0;
+    color: #666;
+    line-height: 1.6;
+}
+
+.task-detail-json {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0;
+    font-size: 0.875rem;
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: 1px solid #ddd;
+}
+
+.task-detail-error {
+    color: #dc3545 !important;
+    background: #f8d7da;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb;
+}
+
+.task-detail-prompt {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* ========== 素材选择面板样式 ========== */
+
+.material-select-dialog {
+    max-width: 80vw;
+    width: 90%;
+    max-height: 85vh;
+    padding: 0;
+}
+
+.material-select-dialog .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    background: #f8f9fa;
+}
+
+.material-select-dialog .dialog-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.material-select-dialog .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.material-select-dialog .close-btn:hover {
+    color: #333;
+    background: #e9ecef;
+}
+
+.material-select-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(85vh - 120px);
+}
+
+.material-filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.filter-tab {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.3s;
+}
+
+.filter-tab:hover {
+    color: #2c3e50;
+}
+
+.filter-tab.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+    font-weight: 500;
+}
+
+.material-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.material-grid-item-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.material-grid-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #f8f9fa;
+}
+
+.material-grid-item-name {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #333;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 0.25rem;
+}
+
+.material-grid-item:hover {
+    border-color: #3498db;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+.material-grid-item.selected {
+    border-color: #3498db;
+    border-width: 3px;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.material-grid-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.material-grid-item.disabled:hover {
+    border-color: #ddd;
+    box-shadow: none;
+}
+
+.material-grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.material-grid-item-disabled-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    z-index: 10;
+}
+
+.material-grid-item-disabled-overlay span {
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.material-grid-item-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    padding: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    justify-content: center;
+}
+
+.material-grid-item:hover .material-grid-item-overlay {
+    opacity: 1;
+}
+
+.material-select-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+/* 多选面板的勾号图标 */
+.material-multi-select-checkmark {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 2rem;
+    height: 2rem;
+    background: #3498db;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    z-index: 20;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== 素材详情面板样式 ========== */
+
+.material-detail-dialog {
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    padding: 0;
+}
+
+.material-detail-dialog .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    background: #f8f9fa;
+}
+
+/* ========== 分镜脚本工具的素材列表样式 ========== */
+
+.storyboard-materials-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.storyboard-material-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f8f9fa;
+    max-width: 300px;
+}
+
+.storyboard-material-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.storyboard-material-item span {
+    flex: 1;
+    font-size: 0.875rem;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.storyboard-material-item .btn {
+    flex-shrink: 0;
+}
+
+.material-detail-dialog .dialog-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.material-detail-dialog .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.material-detail-dialog .close-btn:hover {
+    color: #333;
+    background: #e9ecef;
+}
+
+.material-detail-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(85vh - 80px);
+}
+
+.material-detail-image {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.material-detail-image img {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.material-detail-info {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.material-detail-info h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.25rem;
+    color: #2c3e50;
+}
+
+.material-detail-info p {
+    margin: 0;
+    color: #7f8c8d;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* ========== 图片上传操作按钮样式 ========== */
+
+.image-upload-wrapper {
+    margin-bottom: 0.5rem;
+}
+
+.image-upload-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.image-upload-buttons .btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}

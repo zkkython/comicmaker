@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑剧集 - ComicMaker</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/episode-edit.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">ComicMaker</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="materials.html">素材管理</a></li>
+                <li><a href="works.html" class="active">作品管理</a></li>
+                <li><a href="styles.html">风格管理</a></li>
+                <li><a href="tools.html">工具</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- 剧集信息区域 -->
+            <div class="card" id="episode-info-section">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h2 class="card-title" id="episode-title">加载中...</h2>
+                        <p id="episode-description" style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">加载中...</p>
+                    </div>
+                    <a href="#" id="back-to-episodes-btn" class="btn btn-secondary">返回剧集管理</a>
+                </div>
+            </div>
+
+            <!-- 剧本输入区域 -->
+            <div class="card" id="script-section">
+                <div class="card-header">
+                    <h2 class="card-title">剧本输入</h2>
+                </div>
+                <form id="script-form">
+                    <div class="form-group">
+                        <label for="script-text">剧本内容 *</label>
+                        <textarea id="script-text" rows="10" placeholder="输入剧集剧本..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="expected-duration">预期时长（秒）</label>
+                        <input type="number" id="expected-duration" min="0" step="1" value="60">
+                    </div>
+                    <div class="form-group">
+                        <label for="shot-duration">单镜头预计时间（秒）</label>
+                        <select id="shot-duration" class="form-control">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5" selected>5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">保存剧本</button>
+                        <button type="button" class="btn btn-success" id="generate-single-shot-storyboard-btn">生成单镜头分镜脚本</button>
+                        <button type="button" class="btn btn-secondary" id="generate-multi-shot-storyboard-btn">生成多镜头分镜脚本</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 剧本关联素材列表（显示在剧本和分镜卡片之间） -->
+            <div class="card" id="related-materials-section" style="display: none;">
+                <div class="card-header">
+                    <h2 class="card-title">剧本关联素材</h2>
+                </div>
+                <div class="card-body">
+                    <div id="related-materials-list" class="related-materials-list">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预览面板区域 -->
+            <div class="card" id="preview-panel" style="display: none;">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 class="card-title">剧集预览</h2>
+                    <button class="btn btn-sm btn-secondary" id="close-preview-btn">关闭</button>
+                </div>
+                <div class="card-body" id="preview-panel-content" style="text-align: center; min-height: 300px;">
+                    <!-- 视频或图片将在这里动态显示 -->
+                </div>
+                <div class="card-body" id="preview-subtitle-container" style="display: none;">
+                    <div id="preview-subtitle" class="preview-subtitle"></div>
+                </div>
+            </div>
+
+            <!-- 分镜脚本编辑区域 -->
+            <div class="card" id="storyboard-text-section" style="display: none;">
+                <div class="card-header">
+                    <h2 class="card-title">分镜脚本编辑</h2>
+                </div>
+                
+                <!-- 剧本关联素材列表 -->
+                <div id="storyboard-related-materials-section" style="display: none; margin: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+                    <h4>剧本关联素材：</h4>
+                    <div id="storyboard-related-materials-list" class="related-materials-list">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+                
+                <form id="storyboard-text-form">
+                    <div class="form-group">
+                        <label for="storyboard-text">分镜脚本文本 *</label>
+                        <textarea id="storyboard-text" rows="15" placeholder="分镜脚本文本将在这里显示..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">保存分镜脚本</button>
+                        <button type="button" class="btn btn-success" id="confirm-storyboard-btn">生成分镜</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 分镜卡片区域 -->
+            <div id="shots-section" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">分镜管理</h2>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-success" id="generate-all-prompts-btn">生成全部分镜提示词</button>
+                            <button class="btn btn-primary" id="preview-btn">预览剧集</button>
+                        </div>
+                    </div>
+                    <div id="shots-container" class="shots-grid">
+                        <!-- 分镜卡片将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 预览模态框 -->
+    <dialog class="modal" id="preview-modal">
+        <div class="modal-content" style="max-width: 90%;">
+            <div class="modal-header">
+                <h3>剧集预览</h3>
+                <button class="modal-close" onclick="closePreview()">&times;</button>
+            </div>
+            <div id="preview-container">
+                <!-- 预览内容 -->
+            </div>
+        </div>
+    </dialog>
+
+    <script src="js/api.js"></script>
+    <script src="js/dialog.js"></script>
+    <script src="js/tools.js"></script>
+    <script src="js/episode-edit.js"></script>
+    <style>
+        .related-materials-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .related-material-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .related-material-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .related-material-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .related-material-item-name {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* 预览面板样式 */
+        #preview-panel {
+            margin: 1.5rem 0;
+        }
+        
+        #preview-panel-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            border-radius: 4px;
+            padding: 1rem;
+        }
+        
+        #preview-panel-content video,
+        #preview-panel-content img {
+            max-width: 100%;
+            max-height: 600px;
+            object-fit: contain;
+        }
+        
+        #preview-panel-content p {
+            color: #fff;
+        }
+    </style>
+</body>
+</html>
+

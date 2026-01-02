@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品管理 - ComicMaker</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/works.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">ComicMaker</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="materials.html">素材管理</a></li>
+                <li><a href="works.html" class="active">作品管理</a></li>
+                <li><a href="styles.html">风格管理</a></li>
+                <li><a href="tools.html">工具</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">作品管理</h2>
+                    <button class="btn btn-primary" id="create-work-btn">创建新作品</button>
+                </div>
+
+                <div id="works-list" class="grid">
+                    <!-- 作品列表将在这里动态加载 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 创建作品模态框 -->
+    <dialog class="modal" id="create-work-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>创建新作品</h3>
+                <button class="modal-close" onclick="closeCreateWorkModal()">&times;</button>
+            </div>
+            <form id="create-work-form">
+                <div class="form-group">
+                    <label for="work-name">作品名称 *</label>
+                    <input type="text" id="work-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="work-description">作品描述</label>
+                    <textarea id="work-description"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateWorkModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">创建</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <script src="js/api.js"></script>
+    <script src="js/dialog.js"></script>
+    <script src="js/image-upload.js"></script>
+    <script src="js/works.js"></script>
+</body>
+</html>
+

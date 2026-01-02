@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>风格管理 - ComicMaker</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/tools.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">ComicMaker</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="materials.html">素材管理</a></li>
+                <li><a href="works.html">作品管理</a></li>
+                <li><a href="styles.html" class="active">风格管理</a></li>
+                <li><a href="tools.html">工具</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">风格管理</h2>
+                    <button class="btn btn-primary" id="create-btn">创建新风格</button>
+                </div>
+
+                <div id="styles-list" class="styles-grid">
+                    <!-- 风格列表将在这里动态加载 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 创建/编辑模态框 -->
+    <dialog class="modal" id="style-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">创建新风格</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <form id="style-form">
+                <input type="hidden" id="style-id">
+                
+                <div class="form-group">
+                    <label for="style-name">风格名称 *</label>
+                    <input type="text" id="style-name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="style-description">风格描述 *</label>
+                    <textarea id="style-description" rows="5" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="reference-image">图片参考（可选）</label>
+                    <div class="image-upload-wrapper">
+                        <input type="file" id="reference-image" name="reference-image" accept="image/*">
+                    </div>
+                    <div id="reference-image-preview" class="image-preview"></div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="generate-description-btn" style="margin-top: 10px; display: none;">生成风格描述</button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-btn">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 素材选择面板（单选） -->
+    <dialog id="material-select-dialog" class="material-select-dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>选择素材</h3>
+                <button class="close-btn" onclick="closeMaterialSelectDialog()">&times;</button>
+            </div>
+            <div class="material-select-content">
+                <!-- 筛选标签 -->
+                <div class="material-filter-tabs">
+                    <button class="filter-tab active" data-type="all" onclick="filterMaterials('all')">全部</button>
+                    <button class="filter-tab" data-type="characters" onclick="filterMaterials('characters')">人物</button>
+                    <button class="filter-tab" data-type="scenes" onclick="filterMaterials('scenes')">场景</button>
+                    <button class="filter-tab" data-type="props" onclick="filterMaterials('props')">道具</button>
+                    <button class="filter-tab" data-type="others" onclick="filterMaterials('others')">其他</button>
+                </div>
+                <!-- 素材网格 -->
+                <div id="material-select-grid" class="material-select-grid">
+                    <!-- 素材列表将通过 JS 动态生成 -->
+                </div>
+            </div>
+            <div class="material-select-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeMaterialSelectDialog()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="confirmMaterialSelection()">选择</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- 素材详情面板 -->
+    <dialog id="material-detail-dialog" class="material-detail-dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>素材详情</h3>
+                <button class="close-btn" onclick="closeMaterialDetailDialog()">&times;</button>
+            </div>
+            <div id="material-detail-content" class="material-detail-content">
+                <!-- 详情内容将通过 JS 动态生成 -->
+            </div>
+        </div>
+    </dialog>
+
+    <script src="js/api.js"></script>
+    <script src="js/dialog.js"></script>
+    <script src="js/image-upload.js"></script>
+    <script src="js/tools.js"></script>
+    <script src="js/styles.js"></script>
+</body>
+</html>
+
