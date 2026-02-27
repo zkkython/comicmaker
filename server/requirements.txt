@@ -1,6 +1,26 @@
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-python-multipart==0.0.6
-pytest==7.4.3
-httpx==0.25.2
-pytest-asyncio==0.21.1
+# Web Framework
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+httpx>=0.25.2
+requests>=2.31.0
+
+# Configuration
+pyyaml>=6.0.1
+
+# Image/Video Processing
+opencv-python>=4.9.0
+Pillow>=10.2.0
+imageio>=2.33.0
+moviepy>=1.0.3
+
+# Audio Processing
+librosa>=0.10.1
+soundfile>=0.12.1
+
+# Data Processing
+numpy>=1.26.2
+
+# Testing
+pytest>=7.4.3
+pytest-asyncio>=0.21.1

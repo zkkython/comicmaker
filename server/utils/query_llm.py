@@ -1,3 +1,10 @@
+"""
+LLM 查询工具函数 - 使用 WavespeedClient 实现
+
+此模块提供 LLM 相关的便捷函数，内部统一使用 WavespeedClient。
+所有函数保持向后兼容的签名。
+"""
+
 import os
 import requests
 # from decord import VideoReader, cpu
@@ -8,11 +15,14 @@ import json
 import numpy as np
 from utils.text_process import extract_dict
 
+from .wavespeed_client import WavespeedClient, create_client_from_config
+
 
 # 延迟加载配置，避免导入时失败
 # 配置路径已更新为正确的路径
 _config = None
 _llm_config = None
+_client = None
 
 def _load_config():
     """延迟加载配置"""
@@ -31,6 +41,17 @@ def _load_config():
             _llm_config = {}
     return _config, _llm_config
 
+
+def _get_client(api_key: Optional[str] = None) -> WavespeedClient:
+    """获取 WavespeedClient 实例"""
+    global _client
+    if api_key:
+        return WavespeedClient(api_key=api_key)
+    if _client is None:
+        _client = create_client_from_config()
+    return _client
+
+
 # 为了向后兼容，提供一个函数来获取 llm_config
 def get_llm_config():
     """获取 LLM 配置（延迟加载）"""
@@ -45,6 +66,24 @@ class _LlmConfigProxy:
         return config.get(key, default)
 
 llm_config = _LlmConfigProxy()
+
+
+def _get_api_key() -> str:
+    """获取 API key（优先使用新的统一 key）"""
+    config, llm_cfg = _load_config()
+
+    # 优先使用新的统一 key
+    api_key = config.get('wavespeed_api_key')
+    if api_key:
+        return api_key
+
+    # 向后兼容：尝试从旧位置读取
+    api_key = (
+        config.get('image_gen', {}).get('wavespeed_api')
+        or config.get('video_gen', {}).get('wavespeed_api')
+        or llm_cfg.get('openai_api_key')
+    )
+    return api_key
 
 
 def _encode_image_to_base64(image_path: str) -> str:
@@ -357,6 +396,7 @@ def prepare_video_messages(
 
 
 def refine_gen_prompt(prompt: str, media_type: str = "image") -> str:
+    """优化生成提示词 - 使用 WavespeedClient"""
     if media_type == "image":
         with open("prompts/generation/keyframe_refine.txt", "r") as f:
             ins_prompt = f.read()
@@ -370,16 +410,37 @@ def refine_gen_prompt(prompt: str, media_type: str = "image") -> str:
     message = prepare_multimodal_messages_openai_format(text)
 
     _, llm_cfg = _load_config()
-    response = query_openrouter(
-                        api_key=llm_cfg.get('openai_api_key', None),
-                        model=llm_cfg.get('model', 'gpt-5-2025-08-07'),
-                        messages=message
-                    )
-    return_content = response.get("content", "")
-    context_json = extract_dict(return_content)
-    refined_prompt = context_json.get("prompt", "")
+    api_key = _get_api_key()
 
-    return refined_prompt
+    if not api_key:
+        raise ValueError("No API key found. Please set wavespeed_api_key in config.")
+
+    # 使用 WavespeedClient 进行查询
+    client = _get_client(api_key)
+    try:
+        response = client.chat_completion(
+            messages=message,
+            model=llm_cfg.get('model', 'gpt-4o'),
+            max_tokens=6024
+        )
+        return_content = response.get("content", "")
+        context_json = extract_dict(return_content)
+        refined_prompt = context_json.get("prompt", "")
+        return refined_prompt
+    except Exception as e:
+        # 如果 WavespeedClient 失败，回退到 OpenRouter
+        openai_key = llm_cfg.get('openai_api_key')
+        if openai_key:
+            response = query_openrouter(
+                api_key=openai_key,
+                model=llm_cfg.get('model', 'gpt-4o'),
+                messages=message
+            )
+            return_content = response.get("content", "")
+            context_json = extract_dict(return_content)
+            refined_prompt = context_json.get("prompt", "")
+            return refined_prompt
+        raise
 
 
 def audio_prompt_gen(video_path: str) -> str:
@@ -424,6 +485,7 @@ def speech_prompt_gen(video_path: str) -> str:
 
 
 def multimodal_query(prompt: str, image_path: str=None , video_path: str=None, video_frames_to_extract: int=256):
+    """多模态查询 - 使用 WavespeedClient"""
     multimodal_messages = prepare_multimodal_messages_openai_format(
                             prompt_text=prompt,
                             image_paths=[image_path] if image_path else None,
@@ -431,26 +493,31 @@ def multimodal_query(prompt: str, image_path: str=None , video_path: str=None, v
                             video_frames_to_extract=video_frames_to_extract if video_path else None,
                         )
 
-    if video_path:
-        _, llm_cfg = _load_config()
-        response = query_openai(
-                        api_key=llm_cfg.get('openai_api_key', None),
-                        model=llm_cfg.get('model', 'gpt-5-2025-08-07'),
-                        messages=multimodal_messages,
-                        max_completion_tokens=8192
-                    )
+    api_key = _get_api_key()
+    if not api_key:
+        raise ValueError("No API key found. Please set wavespeed_api_key in config.")
 
-    else:
-        _, llm_cfg = _load_config()
-        response = query_openai(
-                        api_key=llm_cfg.get('openai_api_key', None),
-                        model=llm_cfg.get('model', 'gpt-5-2025-08-07'),
-                        messages=multimodal_messages,
-                        max_completion_tokens=8192
-                    )
+    _, llm_cfg = _load_config()
+    client = _get_client(api_key)
 
-    content = response["content"]
-
-    return content
+    try:
+        response = client.chat_completion(
+            messages=multimodal_messages,
+            model=llm_cfg.get('model', 'gpt-4o'),
+            max_tokens=8192
+        )
+        return response.get("content", "")
+    except Exception as e:
+        # 如果 WavespeedClient 失败，回退到 OpenRouter
+        openai_key = llm_cfg.get('openai_api_key')
+        if openai_key:
+            response = query_openrouter(
+                api_key=openai_key,
+                model=llm_cfg.get('model', 'gpt-4o'),
+                messages=multimodal_messages,
+                max_tokens=8192
+            )
+            return response.get("content", "")
+        raise
 
     

@@ -1,24 +1,28 @@
 # Configuration for mcp_tools
+
+# 统一的 WaveSpeed API Key - 用于图像生成、视频编辑、视频生成和 LLM
+wavespeed_api_key: ""
+
 image_gen:
   text_to_image: "flux-kontext-pro"
   image_to_image: "flux-kontext-pro"
-  wavespeed_api: ""
+  # 注意: wavespeed_api 已迁移到根级别的 wavespeed_api_key
 
 video_editing:
-  wavespeed_api: ""
+  # 注意: wavespeed_api 已迁移到根级别的 wavespeed_api_key
 
 video_gen:
   text_to_video: "seedance-v1-pro-t2v-480p"
   image_to_video: "seedance-v1-pro-t2v-480p"
   frame_to_frame_video: "wan_api"
-  wavespeed_api: ""
+  # 注意: wavespeed_api 已迁移到根级别的 wavespeed_api_key
   base_output_path: "results/video"
   if_audio: True
 
 
 llm:
   model: "openai/gpt-4o"
-  openai_api_key: "sk-or-v1-"
+  # 注意: openai_api_key 已迁移到根级别的 wavespeed_api_key
 
 save_service:
   base_output_path: "results/video"

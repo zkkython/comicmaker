@@ -1,71 +1,68 @@
-import requests
+"""
+视频生成 API 工具函数 - 使用 WavespeedClient 实现
+
+此模块提供视频生成相关的便捷函数，内部统一使用 WavespeedClient。
+所有函数保持向后兼容的签名。
+"""
+
 import json
-import time
 import logging
 import os
-import base64
+import time
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
+
+import requests
+
+from .wavespeed_client import WavespeedClient, create_client_from_config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
-# from dotenv import load_dotenv
+# 全局客户端实例（延迟加载）
+_client = None
 
-# load_dotenv()
+
+def _get_client(api_key: Optional[str] = None) -> WavespeedClient:
+    """获取 WavespeedClient 实例"""
+    global _client
+    if api_key:
+        return WavespeedClient(api_key=api_key)
+    if _client is None:
+        _client = create_client_from_config()
+    return _client
 
 
 def text_to_video_generate(api_key, prompt, save_path: str = None, model="seedance-v1-pro-t2v-480p", provider="bytedance"):
-    url = f"https://api.wavespeed.ai/api/v3/{provider}/{model}"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}",
-    }
-    payload = {
-        "aspect_ratio": "16:9",
-        "duration": 5,
-        "prompt": prompt,
-        "seed": -1
-    }
-
-    begin = time.time()
-    response = requests.post(url, headers=headers, data=json.dumps(payload))
-    if response.status_code == 200:
-        result = response.json()["data"]
-        request_id = result["id"]
-        logger.info(f"Task submitted successfully. Request ID: {request_id}")
-    else:
-        error_text = response.text
-        try:
-            error_json = response.json()
-            error_text = json.dumps(error_json, ensure_ascii=False)
-        except:
-            pass
-        logger.info(f"Error: {response.status_code}, {error_text}")
-        return {
-            'success': False,
-            'error': f"Error: {response.status_code}, {error_text}"
-        }
-
-    url = f"https://api.wavespeed.ai/api/v3/predictions/{request_id}/result"
-    headers = {"Authorization": f"Bearer {api_key}"}
-
-    # Poll for results
-    while True:
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            result = response.json()["data"]
-            status = result["status"]
-
-            if status == "completed":
-                end = time.time()
-                logger.info(f"Task completed in {end - begin} seconds.")
-                url = result["outputs"][0]
-                logger.info(f"Task completed. URL: {url}")
+    """文生视频 - 使用 WavespeedClient"""
+    client = _get_client(api_key)
+    try:
+        result = client.generate_video(
+            prompt=prompt,
+            model=model,
+            provider=provider,
+            aspect_ratio="16:9",
+            duration=5,
+            seed=-1
+        )
+        if result.get('success'):
+            video_url = result['url']
+            if save_path:
+                resp = requests.get(video_url, stream=True)
+                resp.raise_for_status()
+                with open(save_path, "wb") as f:
+                    for chunk in resp.iter_content(8192):
+                        f.write(chunk)
+                return {
+                    'success': True,
+                    'output_path': save_path,
+                    'message': "Video generated successfully."
+                }
+            else:
                 time_ft = datetime.now().strftime("%m%d%H%M%S")
-                url_name = url.split("/")[-1]
-                output_filename = save_path if save_path else f"{time_ft}_{url_name}"
-                resp = requests.get(url, stream=True)
+                url_name = video_url.split("/")[-1]
+                output_filename = f"{time_ft}_{url_name}"
+                resp = requests.get(video_url, stream=True)
                 resp.raise_for_status()
                 with open(output_filename, "wb") as f:
                     for chunk in resp.iter_content(8192):
@@ -75,80 +72,43 @@ def text_to_video_generate(api_key, prompt, save_path: str = None, model="seedan
                     'output_path': output_filename,
                     'message': "Video generated successfully."
                 }
-            elif status == "failed":
-                logger.info(f"Task failed: {result.get('error')}")
-                return {
-                    'success': False,
-                    'error': f"Task failed: {result.get('error')}"
-                }
-            else:
-                logger.info(f"Task still processing. Status: {status}")
         else:
-            logger.info(f"Error: {response.status_code}, {response.text}")
-            return {
-                'success': False,
-                'error': f"Error: {response.status_code}, {response.text}"
-            }
+            return result
+    except Exception as e:
+        logger.error(f"Error in text_to_video_generate: {e}")
+        return {'success': False, 'error': str(e)}
 
 
 def image_to_video_generate(api_key, prompt, image, save_path: str = None, model="seedance-v1-pro-i2v-480p", provider="bytedance", duration=5):
+    """图生视频 - 使用 WavespeedClient"""
     logger.info("Hello from WaveSpeedAI!")
-    
-
-    url = f"https://api.wavespeed.ai/api/v3/{provider}/{model}"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}",
-    }
-    with open(image, "rb") as f:
-        img_bytes = f.read()
-    b64 = base64.b64encode(img_bytes).decode("utf-8")
-    seed = int(datetime.now().timestamp())
-    payload = {
-        "duration": duration,
-        "image": f"data:image/jpeg;base64,{b64}",
-        "prompt": prompt,
-        "seed": seed
-    }
-
-    begin = time.time()
-    response = requests.post(url, headers=headers, data=json.dumps(payload))
-    if response.status_code == 200:
-        result = response.json()["data"]
-        request_id = result["id"]
-        logger.info(f"Task submitted successfully. Request ID: {request_id}")
-    else:
-        error_text = response.text
-        try:
-            error_json = response.json()
-            error_text = json.dumps(error_json, ensure_ascii=False)
-        except:
-            pass
-        logger.info(f"Error: {response.status_code}, {error_text}")
-        return {
-            'success': False,
-            'error': f"Error: {response.status_code}, {error_text}"
-        }
-
-    url = f"https://api.wavespeed.ai/api/v3/predictions/{request_id}/result"
-    headers = {"Authorization": f"Bearer {api_key}"}
-
-    # Poll for results
-    while True:
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            result = response.json()["data"]
-            status = result["status"]
-
-            if status == "completed":
-                end = time.time()
-                logger.info(f"Task completed in {end - begin} seconds.")
-                url = result["outputs"][0]
-                logger.info(f"Task completed. URL: {url}")
+    client = _get_client(api_key)
+    try:
+        result = client.generate_video_from_image(
+            prompt=prompt,
+            image=image,
+            model=model,
+            provider=provider,
+            duration=duration
+        )
+        if result.get('success'):
+            video_url = result['url']
+            if save_path:
+                resp = requests.get(video_url, stream=True)
+                resp.raise_for_status()
+                with open(save_path, "wb") as f:
+                    for chunk in resp.iter_content(8192):
+                        f.write(chunk)
+                return {
+                    'success': True,
+                    'output_path': save_path,
+                    'message': "Video generated successfully."
+                }
+            else:
                 time_ft = datetime.now().strftime("%m%d%H%M%S")
-                url_name = url.split("/")[-1]
-                output_filename = save_path if save_path else f"{time_ft}_{url_name}"
-                resp = requests.get(url, stream=True)
+                url_name = video_url.split("/")[-1]
+                output_filename = f"{time_ft}_{url_name}"
+                resp = requests.get(video_url, stream=True)
                 resp.raise_for_status()
                 with open(output_filename, "wb") as f:
                     for chunk in resp.iter_content(8192):
@@ -158,20 +118,11 @@ def image_to_video_generate(api_key, prompt, image, save_path: str = None, model
                     'output_path': output_filename,
                     'message': "Video generated successfully."
                 }
-            elif status == "failed":
-                logger.info(f"Task failed: {result.get('error')}")
-                return {
-                    'success': False,
-                    'error': f"Task failed: {result.get('error')}"
-                }
-            else:
-                logger.info(f"Task still processing. Status: {status}")
         else:
-            logger.info(f"Error: {response.status_code}, {response.text}")
-            return {
-                'success': False,
-                'error': f"Error: {response.status_code}, {response.text}"
-            }
+            return result
+    except Exception as e:
+        logger.error(f"Error in image_to_video_generate: {e}")
+        return {'success': False, 'error': str(e)}
 
 def frame_to_frame_video(api_key, prompt, images, save_path: str = None, model="wan-flf2v", provider="wavespeed-ai"):
     logger.info("Hello from WaveSpeedAI!")
